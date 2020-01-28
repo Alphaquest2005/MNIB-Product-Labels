@@ -1,0 +1,12 @@
+﻿{
+  "dependencies": {
+    "Extended.Wpf.Toolkit": "2.2.1",
+    "Newtonsoft.Json": "6.0.8"
+  },
+  "frameworks": {
+    "net35": {}
+  },
+  "runtimes": {
+    "win-x86": {}
+  }
+}
