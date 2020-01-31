@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using CashSummaryManager.ViewModels;
 using MNIB_Distribution_Manager;
@@ -79,8 +80,16 @@ namespace CashSummaryManager
         private void UpdateRow1(object sender, SelectionChangedEventArgs selectionChangedEventArgs)
         {
             //find this checkbox parent until getting to listitem layer.
-           
-            CashBreakDown.Instance.SaveRow((sender as FrameworkElement).DataContext as DrawerCashDetail);
+            try
+            {
+                CashBreakDown.Instance.SaveRow((sender as FrameworkElement).DataContext as DrawerCashDetail);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+
         }
 
         private void AddRow(object sender, RoutedEventArgs e)
@@ -99,21 +108,34 @@ namespace CashSummaryManager
             item.IsSelected = true;
         }
 
-        private void UpdateRow(object sender, TextChangedEventArgs e)
-        {
-            CashBreakDown.Instance.SaveRow((sender as FrameworkElement).DataContext as DrawerCashDetail);
-        }
-
         private void SelectCurrentItem(object sender, MouseButtonEventArgs e)
         {
-            ListViewItem item = (ListViewItem)sender;
-            item.IsSelected = true;
+            try
+            {
+                ListViewItem item = (ListViewItem) sender;
+                item.IsSelected = true;
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine(exception);
+                throw;
+            }
+
         }
 
 
         private void UpdateRow(object sender, RoutedEventArgs e)
         {
-            CashBreakDown.Instance.SaveRow((sender as FrameworkElement).DataContext as DrawerCashDetail);
+            try
+            {
+                CashBreakDown.Instance.SaveRow((sender as FrameworkElement).DataContext as DrawerCashDetail);
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine(exception);
+                throw;
+            }
+
         }
 
         private void PostSession(object sender, RoutedEventArgs e)
@@ -136,6 +158,21 @@ namespace CashSummaryManager
         {
             FrameworkElement dependencyObject = (FrameworkElement)((FrameworkElement)sender).FindName("CashSummaryGrd");
             PrintClass.Print(ref dependencyObject);
+        }
+
+        private void RefreshList(object sender, RoutedEventArgs e)
+        {
+            
+           // CashBreakDown.Instance.RefeshDrawerCashDetails();
+              
+            
+        }
+
+
+        private void updateDetails(object sender, TextChangedEventArgs e)
+        {
+            BindingExpression binding = ((FrameworkElement)sender).GetBindingExpression(TextBox.TextProperty);
+            binding?.UpdateSource();
         }
     }
 }

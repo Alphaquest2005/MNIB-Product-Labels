@@ -17,6 +17,7 @@ namespace CashSummaryManager.ViewModels
         private ObservableCollection<DrawerCashDetail> _drawCashDetails = new ObservableCollection<DrawerCashDetail>();
         private DrawerCashDetail _drawCashDetail;
         private ObservableCollection<CashTypeComponent> _cashComponents;
+        private double _float;
 
         public static CashBreakDown Instance
         {
@@ -39,6 +40,22 @@ namespace CashSummaryManager.ViewModels
                 {
                     Instance.DrawerSessionDetails = new ObservableCollection<DrawSessionDetail>(ctx.DrawSessionDetails.Where(x =>
                         x.DrawSessionId == DrawerSelector.Instance.DrawerSession.DrawSessionId));
+                    if(Float == 0)
+                    if (DrawerSelector.Instance.DrawerSession.Status == "Posted")
+                        Float = ctx.DrawerSessionStatus.FirstOrDefault(x =>
+                                        x.DrawSessionId ==
+                                        DrawerSelector.Instance.DrawerSession.DrawSessionId.ToString())
+                                    ?.Float ?? 0;
+                    else
+                    {
+                        Float = ctx.StoreSettings.FirstOrDefault(x => x.StoreId == Convert.ToInt32(DrawerSelector.Instance.DrawerSession.StoreId))
+                                ?.Float ?? 0 ;
+                    }
+                   
+
+                    
+                    NotifyDrawTotals();
+
                 }
 
             if (oldDrawSessionDetail != null)
@@ -97,7 +114,7 @@ namespace CashSummaryManager.ViewModels
             RefeshDrawerCashDetails();
         }
 
-        private void RefeshDrawerCashDetails()
+        public void RefeshDrawerCashDetails()
         {
             if(DrawSessionDetail == null)return;
             using (var ctx = new CashSummaryDBDataContext())
@@ -109,7 +126,8 @@ namespace CashSummaryManager.ViewModels
             }
 
             
-          RefeshDrawerTotals();
+          //RefeshDrawerTotals();
+            NotifyDrawTotals();
         }
 
         public ObservableCollection<DrawerCashDetail> DrawCashDetails
@@ -149,10 +167,10 @@ namespace CashSummaryManager.ViewModels
             }
         }
 
-        public double DrawCashDifference => SessionTotal - CashTotal;
+        public double DrawCashDifference => Float + SessionTotal - CashTotal;
         
 
-        public bool IsBalanced => Math.Abs(CashTotal - SessionTotal) < 0.001;
+        public bool IsBalanced => Math.Abs(DrawCashDifference) < 0.001;
 
         public DrawSessionDetail DrawSessionDetail
         {
@@ -241,45 +259,70 @@ namespace CashSummaryManager.ViewModels
         }
 
         public double CashDetailDiff => Math.Abs(DetailTotal - Convert.ToDouble(DrawSessionDetail?.Amount));
-        
+
+        public double Float
+        {
+            get => _float;
+            set
+            {
+                _float = value;
+                OnPropertyChanged();
+                NotifyDrawTotals(); ;
+            }
+        }
 
 
         public void SaveRow(DrawerCashDetail d)
         {
             if (DrawCashDetail == null || d == null)
             {
-               // Application.Current.Dispatcher.Invoke(() => {MessageBox.Show("Please Select Drawer Detail"); });
-                
+                // Application.Current.Dispatcher.Invoke(() => {MessageBox.Show("Please Select Drawer Detail"); });
+
                 return;
             }
+
+            var needrefersh = false;
             using (var ctx = new CashSummaryDBDataContext())
             {
 
                 var res = ctx.DrawerCashDetails.First(x => x.Id == d.Id);
                 res.Comments = d.Comments;
+                needrefersh = res.Quantity != d.Quantity;
                 res.Quantity = d.Quantity;
-                if(d.CashTypeComponent != null) res.CashTypeComponent = ctx.CashTypeComponents.First(x => x.Id == d.CashTypeComponent.Id);
-                res.CashTypeCompoentId = d.CashTypeCompoentId;
+                if (d.CashTypeComponent != null)
+                    res.CashTypeComponent = ctx.CashTypeComponents.First(x => x.Id == d.CashTypeComponent.Id);
+                if (d.CashTypeCompoentId != 0) res.CashTypeCompoentId = d.CashTypeCompoentId;
                 ctx.SubmitChanges();
-               
+
             }
-            RefeshDrawerTotals();
+
+            //RefeshDrawerTotals();
+            if (!needrefersh) return;
+            
+            NotifyDrawTotals();
+            GetDrawerSessionDetails();
+
         }
 
         private void RefeshDrawerTotals()
         {
             GetDrawerSessionDetails();
+            NotifyDrawTotals();
+        }
+
+        private void NotifyDrawTotals()
+        {
             OnPropertyChanged(nameof(DetailTotal));
             OnPropertyChanged(nameof(SessionTotal));
             OnPropertyChanged(nameof(CashTotal));
             OnPropertyChanged(nameof(DrawCashDifference));
             OnPropertyChanged(nameof(IsBalanced));
-            OnPropertyChanged(nameof(CashDetailDiff)); 
+            OnPropertyChanged(nameof(CashDetailDiff));
         }
 
         public void PostSession()
         {
-            if (DrawerSelector.Instance.DrawerSession.Status == "Un-Posted" && DrawerSelector.Instance.User.UserPermissions.Any(x => x.Permission.Name == "Supervisor"))
+            if (DrawerSelector.Instance.DrawerSession.Status == "Un-Posted" && DrawerSelector.Instance.User.UserPermissions.Any(x => x.Permission.Name == "Supervisor" || x.Permission.Name == "Admin"))
             {
                 DrawerSelector.Instance.DrawerSession.Status = "Posted";
                 using (var ctx = new CashSummaryDBDataContext())
@@ -288,6 +331,7 @@ namespace CashSummaryManager.ViewModels
                     {
                         DrawSessionId = DrawerSelector.Instance.DrawerSession.DrawSessionId.ToString(),
                         UserId = DrawerSelector.Instance.User.Id,
+                        Float = Float,
                         EntryDateTime = DateTime.Now,
                         Status = "Posted"
                     });

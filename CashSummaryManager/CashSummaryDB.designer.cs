@@ -54,6 +54,9 @@ namespace CashSummaryManager
     partial void InsertDrawerCashDetail(DrawerCashDetail instance);
     partial void UpdateDrawerCashDetail(DrawerCashDetail instance);
     partial void DeleteDrawerCashDetail(DrawerCashDetail instance);
+    partial void InsertStoreSetting(StoreSetting instance);
+    partial void UpdateStoreSetting(StoreSetting instance);
+    partial void DeleteStoreSetting(StoreSetting instance);
     partial void InsertDrawerSessionStatus(DrawerSessionStatus instance);
     partial void UpdateDrawerSessionStatus(DrawerSessionStatus instance);
     partial void DeleteDrawerSessionStatus(DrawerSessionStatus instance);
@@ -201,6 +204,14 @@ namespace CashSummaryManager
 			}
 		}
 		
+		public System.Data.Linq.Table<StoreSetting> StoreSettings
+		{
+			get
+			{
+				return this.GetTable<StoreSetting>();
+			}
+		}
+		
 		public System.Data.Linq.Table<DrawerSessionStatus> DrawerSessionStatus
 		{
 			get
@@ -214,6 +225,14 @@ namespace CashSummaryManager
 			get
 			{
 				return this.GetTable<DrawerSession>();
+			}
+		}
+		
+		public System.Data.Linq.Table<DrawerSessionsJournalEntry> DrawerSessionsJournalEntries
+		{
+			get
+			{
+				return this.GetTable<DrawerSessionsJournalEntry>();
 			}
 		}
 	}
@@ -2106,6 +2125,116 @@ namespace CashSummaryManager
 		}
 	}
 	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.StoreSettings")]
+	public partial class StoreSetting : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _Id;
+		
+		private int _StoreId;
+		
+		private double _Float;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnIdChanging(int value);
+    partial void OnIdChanged();
+    partial void OnStoreIdChanging(int value);
+    partial void OnStoreIdChanged();
+    partial void OnFloatChanging(double value);
+    partial void OnFloatChanged();
+    #endregion
+		
+		public StoreSetting()
+		{
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int Id
+		{
+			get
+			{
+				return this._Id;
+			}
+			set
+			{
+				if ((this._Id != value))
+				{
+					this.OnIdChanging(value);
+					this.SendPropertyChanging();
+					this._Id = value;
+					this.SendPropertyChanged("Id");
+					this.OnIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StoreId", DbType="Int NOT NULL")]
+		public int StoreId
+		{
+			get
+			{
+				return this._StoreId;
+			}
+			set
+			{
+				if ((this._StoreId != value))
+				{
+					this.OnStoreIdChanging(value);
+					this.SendPropertyChanging();
+					this._StoreId = value;
+					this.SendPropertyChanged("StoreId");
+					this.OnStoreIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Float", DbType="Float NOT NULL")]
+		public double Float
+		{
+			get
+			{
+				return this._Float;
+			}
+			set
+			{
+				if ((this._Float != value))
+				{
+					this.OnFloatChanging(value);
+					this.SendPropertyChanging();
+					this._Float = value;
+					this.SendPropertyChanged("Float");
+					this.OnFloatChanged();
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.DrawerSessionStatus")]
 	public partial class DrawerSessionStatus : INotifyPropertyChanging, INotifyPropertyChanged
 	{
@@ -2122,6 +2251,8 @@ namespace CashSummaryManager
 		
 		private System.DateTime _EntryDateTime;
 		
+		private System.Nullable<double> _Float;
+		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
@@ -2136,6 +2267,8 @@ namespace CashSummaryManager
     partial void OnUserIdChanged();
     partial void OnEntryDateTimeChanging(System.DateTime value);
     partial void OnEntryDateTimeChanged();
+    partial void OnFloatChanging(System.Nullable<double> value);
+    partial void OnFloatChanged();
     #endregion
 		
 		public DrawerSessionStatus()
@@ -2243,6 +2376,26 @@ namespace CashSummaryManager
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Float", DbType="Float")]
+		public System.Nullable<double> Float
+		{
+			get
+			{
+				return this._Float;
+			}
+			set
+			{
+				if ((this._Float != value))
+				{
+					this.OnFloatChanging(value);
+					this.SendPropertyChanging();
+					this._Float = value;
+					this.SendPropertyChanged("Float");
+					this.OnFloatChanged();
+				}
+			}
+		}
+		
 		public event PropertyChangingEventHandler PropertyChanging;
 		
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -2293,14 +2446,6 @@ namespace CashSummaryManager
 		private string _Status;
 		
 		private string _StoreName;
-		
-		private string _DebitAccountNumber;
-		
-		private string _DebitAccountDescription;
-		
-		private string _CreditAccountNumber;
-		
-		private string _CreditAccountDescription;
 		
 		public DrawerSession()
 		{
@@ -2513,6 +2658,27 @@ namespace CashSummaryManager
 				}
 			}
 		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.DrawerSessionsJournalEntry")]
+	public partial class DrawerSessionsJournalEntry
+	{
+		
+		private string _DebitAccountNumber;
+		
+		private string _DebitAccountDescription;
+		
+		private string _CreditAccountNumber;
+		
+		private string _CreditAccountDescription;
+		
+		private System.Nullable<long> _DrawSessionId;
+		
+		private System.Nullable<double> _Amount;
+		
+		public DrawerSessionsJournalEntry()
+		{
+		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DebitAccountNumber", DbType="VarChar(50) NOT NULL", CanBeNull=false)]
 		public string DebitAccountNumber
@@ -2574,6 +2740,38 @@ namespace CashSummaryManager
 				if ((this._CreditAccountDescription != value))
 				{
 					this._CreditAccountDescription = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DrawSessionId", DbType="BigInt")]
+		public System.Nullable<long> DrawSessionId
+		{
+			get
+			{
+				return this._DrawSessionId;
+			}
+			set
+			{
+				if ((this._DrawSessionId != value))
+				{
+					this._DrawSessionId = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Amount", DbType="Float")]
+		public System.Nullable<double> Amount
+		{
+			get
+			{
+				return this._Amount;
+			}
+			set
+			{
+				if ((this._Amount != value))
+				{
+					this._Amount = value;
 				}
 			}
 		}

@@ -18,7 +18,7 @@
         <Style TargetType="TextBlock">
             <Setter Property="Foreground" Value="Black"/>
         </Style>
-        
+
         <Style TargetType="PasswordBox">
             <Setter Property="Margin" Value="4"/>
             <Setter Property="MinWidth" Value="100"/>
@@ -41,6 +41,7 @@
         <Grid.RowDefinitions>
 
             <RowDefinition x:Name="LoginRow" Height="169"/>
+            <RowDefinition x:Name="UserOptionsRow"  Height="169"/>
 
 
         </Grid.RowDefinitions>
@@ -110,9 +111,36 @@
 				VerticalAlignment="Bottom"
 				Margin="5"
 				HorizontalAlignment="Right" Height="Auto">
+                <Button x:Name="UserOptionsBtn" Content="User Settings" HorizontalAlignment="Left"  Margin="5,5,30,0" VerticalAlignment="Top" Width="80" Click="UserOptionsBtn_Click" Foreground="Black"/>
                 <Button Content="Log-on" Click="DoLogonClick" IsDefault="True"/>
                 <Button Content="Cancel" IsCancel="True"/>
             </StackPanel>
+
+        </Grid>
+        <Grid x:Name="UserOptionsGrd" Grid.Row="4">
+            <Label HorizontalAlignment="Stretch"
+                   HorizontalContentAlignment="Center"
+                   Foreground="#FFD3D9EE"
+                   FontWeight="Normal"
+                   FontSize="16"
+                   FontFamily="Calibri"
+                   Content="User Options" Margin="0,0,0,139.47">
+                <Label.Background>
+                    <LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5">
+                        <GradientStop Color="#FF293262" Offset="0"/>
+                        <GradientStop Color="#FF5A6DCD" Offset="0.4"/>
+                        <GradientStop Color="#FF5A6DCD" Offset="0.6"/>
+                        <GradientStop Color="#FF293262" Offset="1"/>
+                    </LinearGradientBrush>
+                </Label.Background>
+            </Label>
+            <Button x:Name="BackBtn" Content="Back" Click="BackBtn_Click_1" HorizontalAlignment="Left" Height="30" Margin="10,129,0,0" VerticalAlignment="Top" Width="80" Foreground="Black"/>
+            <TextBlock HorizontalAlignment="Left" Height="20" Margin="25,68,0,0" TextWrapping="Wrap" Text="User name" VerticalAlignment="Top" Width="75"/>
+            <TextBox  Text="{Binding CurrentUser.LoginName, Mode=TwoWay}" HorizontalAlignment="Left" Height="20" Margin="120,68,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="140"/>
+            <TextBlock HorizontalAlignment="Left" Height="20" Margin="25,94,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="75"><Run Text="Password"/><LineBreak/><Run/></TextBlock>
+            <TextBox  Text="{Binding CurrentUser.Password, Mode=TwoWay}" HorizontalAlignment="Left" Height="20" Margin="120,94,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="140" Foreground="#00000000"/>
+            <TextBlock HorizontalAlignment="Left" Height="20" Margin="25,43,0,0" TextWrapping="Wrap" Text="Users" VerticalAlignment="Top" Width="75"/>
+            <ComboBox  ItemsSource="{Binding Users}" SelectedItem="{Binding CurrentUser, Mode=TwoWay}" DisplayMemberPath="Name" HorizontalAlignment="Left" Height="20" Margin="120,43,0,0" VerticalAlignment="Top" Width="140"/>
 
         </Grid>
 

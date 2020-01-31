@@ -14,7 +14,7 @@ namespace CashSummaryManager
     /// </summary>
     public partial class App : Application
     {
-        private bool Authenticate(string user, string pass)
+        public static bool Authenticate(string user, string pass)
         {
 
 
@@ -35,7 +35,7 @@ namespace CashSummaryManager
                 }
             }
         }
-        private User _user = null;
+        private static User _user = null;
         public User User
         {
             get
@@ -44,7 +44,7 @@ namespace CashSummaryManager
             }
         }
 
-        private bool LogIn()
+        private static bool LogIn()
         {
 
 
@@ -79,7 +79,7 @@ namespace CashSummaryManager
         }
 
 
-        private bool LogOut()
+        private static bool LogOut()
         {
             if (_user == null) return false;
 

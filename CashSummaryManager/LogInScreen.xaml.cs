@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using CashSummaryManager.ViewModels;
 
 
 namespace CashSummaryManager
@@ -16,7 +19,8 @@ namespace CashSummaryManager
         enum Status
         {
             LoginScreen,
-            
+
+            UserOptions
         }
         private Visibility hintVisibility;
 
@@ -36,11 +40,28 @@ User _user;
                 if (_user != value)
                 {
                     _user = value;
+
                 }
             }
         }
 
-public LogInScreen()
+        User _currentUser;
+
+        public User CurrentUser
+        {
+            get { return _currentUser; }
+            set
+            {
+                if (_currentUser != value)
+                {
+                    _currentUser = value;
+                    OnPropertyChanged("CurrentUser");
+
+                }
+            }
+        }
+
+        public LogInScreen()
 {
     try
     {
@@ -48,15 +69,16 @@ public LogInScreen()
         InitializeComponent();
 
         DataContext = this;
+        UserOptionsGrd.DataContext = this;
         HintVisibility = Visibility.Hidden;
         this.Height = 179;
         xUsername.Focus();
 
-      
-     
 
-       
-    }
+        UserOptionsRow.Height = new GridLength(0);
+
+
+            }
     catch (Exception ex)
     {
 
@@ -70,7 +92,9 @@ public LogInScreen()
         /// </summary>
         /// 
         int RowHeight = 169;
-        
+
+        private List<User> _users;
+
 
         /// <summary>
         /// Returns the username entered within the UI.
@@ -193,8 +217,58 @@ public LogInScreen()
         }
 
 
+        private void UserOptionsBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (!App.Authenticate(UserName, Password)) return;
+            User = DrawerSelector.Instance.User;
+            ShowUserOptions();
+
+        }
+
+        public void ShowUserOptions()
+        {
+            LoginRow.Height = new GridLength(0);
+            UserOptionsRow.Height = new GridLength(RowHeight);
+            _status = Status.UserOptions;
+
+            if (User.UserPermissions.Any(x => x.Permission.Name == "Admin"))
+            {
+                using (var ctx = new CashSummaryDBDataContext())
+                {
+                    Users = ctx.Users.ToList();
+                }
+            }
 
 
+        }
+
+        public List<User> Users
+        {
+            get => _users;
+            set
+            {
+                _users = value;
+                OnPropertyChanged("Users");
+            }
+        }
+
+        private void BackBtn_Click_1(object sender, RoutedEventArgs e)
+        {
+            using (var ctx = new CashSummaryDBDataContext())
+            {
+                var res = ctx.Users.First(x => x.Id == CurrentUser.Id);
+                res.LoginName = CurrentUser.LoginName;
+                res.Password = CurrentUser.Password;
+                ctx.SubmitChanges();
+            }
+            HideUserOptions();
+        }
+        public void HideUserOptions()
+        {
+            LoginRow.Height = new GridLength(RowHeight);
+            UserOptionsRow.Height = new GridLength(0);
+            _status = Status.LoginScreen;
+        }
     }
 }
         

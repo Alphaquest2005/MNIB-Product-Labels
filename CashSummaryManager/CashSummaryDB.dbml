@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?><Database Name="CashSummary" Class="CashSummaryDBDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
-  <Connection Mode="AppSettings" ConnectionString="Data Source=JOSEPH-PC\SQLEXPRESS2017;Initial Catalog=CashSummary;Integrated Security=True" SettingsObjectName="CashSummaryManager.Properties.Settings" SettingsPropertyName="CashSummaryConnectionString" Provider="System.Data.SqlClient" />
+  <Connection Mode="AppSettings" ConnectionString="Data Source=JOSEPH-PC\SQLDEVELOPER2017;Initial Catalog=CashSummary;Integrated Security=True" SettingsObjectName="CashSummaryManager.Properties.Settings" SettingsPropertyName="CashSummaryConnectionString" Provider="System.Data.SqlClient" />
   <Table Name="dbo.Permissions" Member="Permissions">
     <Type Name="Permission">
       <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
@@ -120,6 +120,13 @@
       <Column Name="Difference" Type="System.Double" DbType="Float" CanBeNull="true" />
     </Type>
   </Table>
+  <Table Name="dbo.StoreSettings" Member="StoreSettings">
+    <Type Name="StoreSetting">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="StoreId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Float" Type="System.Double" DbType="Float NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
   <Table Name="dbo.DrawerSessionStatus" Member="DrawerSessionStatus">
     <Type Name="DrawerSessionStatus">
       <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
@@ -127,6 +134,7 @@
       <Column Name="Status" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
       <Column Name="UserId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
       <Column Name="EntryDateTime" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="Float" Type="System.Double" DbType="Float" CanBeNull="true" />
     </Type>
   </Table>
   <Table Name="dbo.DrawerSessions" Member="DrawerSessions">
@@ -144,10 +152,18 @@
       <Column Name="Drawer" Type="System.String" DbType="VarChar(30) NOT NULL" CanBeNull="false" />
       <Column Name="Status" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
       <Column Name="StoreName" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Association Name="DrawerSession_DrawerSessionsJournalEntry" Member="DrawerSessionsJournalEntries" ThisKey="DrawSessionId" OtherKey="DrawSessionId" Type="DrawerSessionsJournalEntry" />
+    </Type>
+  </Table>
+  <Table Name="dbo.DrawerSessionsJournalEntry" Member="DrawerSessionsJournalEntries">
+    <Type Name="DrawerSessionsJournalEntry">
       <Column Name="DebitAccountNumber" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
       <Column Name="DebitAccountDescription" Type="System.String" DbType="VarChar(255) NOT NULL" CanBeNull="false" />
       <Column Name="CreditAccountNumber" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
       <Column Name="CreditAccountDescription" Type="System.String" DbType="VarChar(255) NOT NULL" CanBeNull="false" />
+      <Column Name="DrawSessionId" Type="System.Int64" DbType="BigInt" CanBeNull="true" />
+      <Column Name="Amount" Type="System.Double" DbType="Float" CanBeNull="true" />
+      <Association Name="DrawerSession_DrawerSessionsJournalEntry" Member="DrawerSession" ThisKey="DrawSessionId" OtherKey="DrawSessionId" Type="DrawerSession" IsForeignKey="true" />
     </Type>
   </Table>
 </Database>

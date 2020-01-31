@@ -83,10 +83,10 @@
 
                     <TextBlock Text="Cash BreakDown" Margin="31,10,812,464" FontWeight="Bold" Foreground="#FF14520D" FontSize="20" />
                     <ListView ItemsSource="{Binding DrawerSessionDetails, Mode=OneWay}"
-                              SelectedItem="{Binding DrawSessionDetail, Mode= OneWayToSource}"  Margin="31,71,655,200" 
+                              SelectedItem="{Binding DrawSessionDetail, Mode= OneWayToSource}"  Margin="31,71,655,227" 
                               Background="#7FFBFFD1"
                               >
-                        
+
                         <ListView.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal" Width="Auto" Height="25">
@@ -108,11 +108,12 @@
                             <Style TargetType="ListViewItem">
                                 <EventSetter Event="PreviewGotKeyboardFocus" Handler="SelectCurrentItem"/>
                                 <EventSetter Event="PreviewMouseLeftButtonDown" Handler="SelectCurrentItem"/>
-                                <!--<Style.Triggers>
+                                <EventSetter Event="LostFocus" Handler="RefreshList"/>
+                                <Style.Triggers>
                                     <Trigger Property="IsMouseOver" Value="True">
                                         <Setter Property="IsSelected" Value="True"/>
                                     </Trigger>
-                                </Style.Triggers>-->
+                                </Style.Triggers>
                             </Style>
                         </ListView.ItemContainerStyle>
                         <ListView.ItemTemplate>
@@ -153,7 +154,7 @@
                     <TextBlock Text="Total" Margin="774,396,165,69" FontWeight="Bold" Foreground="#FFC8F307" FontSize="20" />
                     <TextBlock Text="{Binding DetailTotal, StringFormat=c}" Margin="840,396,10,69" FontWeight="Bold" Foreground="#FFC8F307" FontSize="20" />
                     <TextBlock Text="Drawer" Margin="32,315,889,150" FontWeight="Bold" Foreground="#FFC8F307" FontSize="20" />
-                    <TextBlock Text="{Binding SessionTotal, StringFormat=c}" Margin="205,315,655,150" FontWeight="Bold" Foreground="#FFC8F307" FontSize="20" />
+                    <TextBlock Text="{Binding SessionTotal, StringFormat=c}" Margin="205,321,655,150" FontWeight="Bold" Foreground="#FFC8F307" FontSize="20" />
                     <TextBlock Text="{Binding CashTotal, StringFormat=c}" Margin="205,355,655,110" FontWeight="Bold" Foreground="#FFC8F307" FontSize="20" />
                     <TextBlock Text="{Binding DrawCashDifference, StringFormat=c}" Margin="205,396,655,69" FontWeight="Bold" Foreground="#FFC8F307" FontSize="20" />
                     <TextBlock Text="Cash" Margin="31,355,911,110" FontWeight="Bold" Foreground="#FFC8F307" FontSize="20" />
@@ -162,12 +163,27 @@
                     <TextBlock Text="Amount" Width="50" Margin="106,50,844,434" FontWeight="Bold" Foreground="#FFC8F307" />
                     <TextBlock Text="Reading" Width="50" Margin="182,50,768,434" FontWeight="Bold" Foreground="#FFC8F307" />
                     <TextBlock Text="Difference" Margin="257,50,679,434" FontWeight="Bold" Foreground="#FFC8F307" />
+                    <TextBlock Text="Float" Margin="31,279,888,184" FontWeight="Bold" Foreground="#FFC8F307" FontSize="20" />
+                    <TextBox Text="{Binding Float, StringFormat=c, UpdateSourceTrigger=PropertyChanged}" TextChanged="updateDetails" Margin="204,279,654,184" FontWeight="Bold" Foreground="#FFC8F307" Background="#7F000000" FontSize="20" />
 
                 </Grid>
             </Grid>
         </DataTemplate>
         <DataTemplate DataType="{x:Type viewModels:CashSummary}">
             <Grid >
+                <Grid.Resources>
+                    <Style x:Key="itemStyle" TargetType="{x:Type ListBoxItem}">
+                        <Style.Triggers>
+                            <Trigger Property="ItemsControl.AlternationIndex" Value="0">
+                                <Setter Property="Background" Value="LightGray" />
+                            </Trigger>
+                            <Trigger Property="ItemsControl.AlternationIndex" Value="1">
+                                <!--<Setter Property="Background" Value="Yellow" />-->
+                                <Setter Property="HorizontalContentAlignment" Value="Right" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Grid.Resources>
                 <ScrollViewer Margin="0,0,0,150" Width="300">
                     <StackPanel Background="White" Width="300" x:Name="CashSummaryGrd" >
                         <TextBlock Text="Marketing &amp; National Importing Board" Margin="0,0,0,0" TextAlignment="Center" Height="21"/>
@@ -206,7 +222,7 @@
                                         <StackPanel Orientation="Horizontal" Width="Auto" Height="18" Background="#FFE4E4E4">
 
                                             <TextBlock Text="{Binding PayCode}" FontSize="10" Width="180" Margin="15,0,0,0"  />
-                                            <TextBlock Text="{Binding Amount, StringFormat=c}"  FontSize="10" Width="60" Margin="10,0,0,0"   />
+                                            <TextBlock Text="{Binding ActualAmount, StringFormat=c}"  FontSize="10" Width="60" Margin="10,0,0,0"   />
                                             
                                         </StackPanel>
                                         <!--<Border Width="300" Height="1" Background="Black"/>-->
@@ -251,8 +267,22 @@
                                    FontSize="10" Width="300" Margin="0,20,0,40"  />
                         <Border Width="300" Height="1" Background="Black"/>
                         <TextBlock Text="Journal Entry" FontSize="12" FontWeight="Bold" Width="80" Margin="15,20,0,20"  />
-                        <TextBlock Text="{Binding Instance.DebitEntry}" FontSize="10" Margin="10,0,0,0" TextAlignment="Left" Height="21"/>
-                        <TextBlock Text="{Binding Instance.CreditEntry}" FontSize="10" Margin="0,0,20,20" TextAlignment="Right" Height="21"/>
+                        <ListBox ItemContainerStyle="{StaticResource itemStyle}"  ItemsSource="{Binding Instance.DrawerSessionsJournalEntry, Source={StaticResource CashSummaryDataSource}}" AlternationCount="2" Width="270" Margin="5,5,15,5" BorderBrush="{x:Null}">
+                            
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid >
+                                        
+                                        <TextBlock Text="{Binding }" FontSize="8" TextAlignment="Left" x:Name="rowImage"/>
+                                    </Grid>
+                                    
+                                          
+                                    
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                        <!--<TextBlock Text="{Binding Instance.DebitEntry}" FontSize="10" Margin="10,0,0,0" TextAlignment="Left" Height="21"/>
+                        <TextBlock Text="{Binding Instance.CreditEntry}" FontSize="10" Margin="0,0,20,20" TextAlignment="Right" Height="21"/>-->
                     </StackPanel>
                 </ScrollViewer>
                 <Button Content="Back" Click="ToCashBreakDown" Margin="150,390,600,10" Height="50" Width="100"/>
@@ -315,7 +345,7 @@
                        VerticalAlignment="Top"
                        FontSize="36"
                        Foreground="Purple"
-                       Text="MNIB Cheque Manager"
+                       Text="MNIB Cash Summary"
                        TextWrapping="Wrap" />
             <TextBlock Width="35"
                        Height="32"
