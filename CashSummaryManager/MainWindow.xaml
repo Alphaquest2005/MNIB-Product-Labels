@@ -160,8 +160,8 @@
                     <TextBlock Text="Cash" Margin="31,355,911,110" FontWeight="Bold" Foreground="#FFC8F307" FontSize="20" />
                     <TextBlock Text="Diff:" Margin="31,395,911,70" FontWeight="Bold" Foreground="#FFC8F307" FontSize="20" />
                     <TextBlock Text="Pay Code" Width="50" Margin="32,50,918,434" FontWeight="Bold" Foreground="#FFC8F307" />
-                    <TextBlock Text="Amount" Width="50" Margin="106,50,844,434" FontWeight="Bold" Foreground="#FFC8F307" />
-                    <TextBlock Text="Reading" Width="50" Margin="182,50,768,434" FontWeight="Bold" Foreground="#FFC8F307" />
+                    <TextBlock Text="Reading" Width="50" Margin="106,50,844,434" FontWeight="Bold" Foreground="#FFC8F307" />
+                    <TextBlock Text="Amount" Width="50" Margin="182,50,768,434" FontWeight="Bold" Foreground="#FFC8F307" />
                     <TextBlock Text="Difference" Margin="257,50,679,434" FontWeight="Bold" Foreground="#FFC8F307" />
                     <TextBlock Text="Float" Margin="31,279,888,184" FontWeight="Bold" Foreground="#FFC8F307" FontSize="20" />
                     <TextBox Text="{Binding Float, StringFormat=c, UpdateSourceTrigger=PropertyChanged}" TextChanged="updateDetails" Margin="204,279,654,184" FontWeight="Bold" Foreground="#FFC8F307" Background="#7F000000" FontSize="20" />

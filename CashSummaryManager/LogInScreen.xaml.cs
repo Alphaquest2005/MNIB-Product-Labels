@@ -231,16 +231,17 @@ User _user;
             UserOptionsRow.Height = new GridLength(RowHeight);
             _status = Status.UserOptions;
 
-            if (User.UserPermissions.Any(x => x.Permission.Name == "Admin"))
+
+            using (var ctx = new CashSummaryDBDataContext())
             {
-                using (var ctx = new CashSummaryDBDataContext())
-                {
-                    Users = ctx.Users.ToList();
-                }
+                Users = User.UserPermissions.Any(x => x.Permission.Name == "Admin") 
+                    ? ctx.Users.ToList() 
+                    : ctx.Users.Where(x => x.Id == User.Id).ToList();
             }
-
-
         }
+
+
+
 
         public List<User> Users
         {

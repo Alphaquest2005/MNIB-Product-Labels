@@ -140,7 +140,7 @@ namespace CashSummaryManager.ViewModels
                 _drawerSession = value;
                 OnPropertyChanged(nameof(HasSelectedDrawerSession));
                 OnPropertyChanged();
-                CashBreakDown.Instance.GetDrawerSessionDetails();
+                
             }
         }
 

@@ -70,6 +70,7 @@ namespace CashSummaryManager
         private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
         {
             ContentControl.Content = CashBreakDown.Instance;
+            CashBreakDown.Instance.GetDrawerSessionDetails();
         }
 
         private void ToDrawerSelector(object sender, RoutedEventArgs e)
